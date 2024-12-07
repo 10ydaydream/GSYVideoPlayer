@@ -88,4 +88,6 @@ dependencies {
     annotationProcessor dataDependencies.permissionsDispatcherProcessor
 
     debugImplementation dataDependencies.leakcanary
+
+    implementation 'io.github.youth5201314:banner:2.2.3'
 }

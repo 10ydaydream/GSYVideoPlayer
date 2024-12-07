@@ -110,6 +110,7 @@ public class SwitchDetailActivity extends AppCompatActivity {
         if (GSYVideoManager.backFromWindowFull(this)) {
             return;
         }
+        SwitchUtil.savePlayState(detailPlayer);
         super.onBackPressed();
     }
 

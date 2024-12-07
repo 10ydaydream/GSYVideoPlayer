@@ -14,6 +14,7 @@ import android.widget.SeekBar;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gsyvideoplayer.R;
+import com.example.gsyvideoplayer.switchplay.SwitchVideo;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -27,6 +28,12 @@ import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
  */
 
 public class SampleCoverVideo extends StandardGSYVideoPlayer {
+
+//    @Override
+//    public boolean onSurfaceDestroyed(Surface surface) {
+////        return super.onSurfaceDestroyed(surface);
+//        return true;
+//    }
 
     ImageView mCoverImage;
 
@@ -256,5 +263,9 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
 
     public  Surface getCurrentSurface() {
         return mSurface;
+    }
+
+    public void cloneState(SampleCoverVideo switchVideo) {
+        cloneParams(switchVideo, this);
     }
 }
