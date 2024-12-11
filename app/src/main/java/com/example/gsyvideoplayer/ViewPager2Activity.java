@@ -1,5 +1,6 @@
 package com.example.gsyvideoplayer;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,7 @@ public class ViewPager2Activity extends AppCompatActivity {
     public static boolean needAutoPlay = true;
     private SampleCoverVideo mSampleCoverVideo;
     private boolean hasClone = false;
+    public static Bitmap mShot = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,110 +52,27 @@ public class ViewPager2Activity extends AppCompatActivity {
         setContentView(rootView);
 
         mSampleCoverVideo = new SampleCoverVideo(this);
+        String url = "https://pointshow.oss-cn-hangzhou.aliyuncs.com/McTk51586843620689.mp4";
+        String title = "这是title";
         GSYVideoOptionBuilder gsyVideoOptionBuilder = new GSYVideoOptionBuilder();
         gsyVideoOptionBuilder
             .setIsTouchWiget(false)
             //.setThumbImageView(imageView)
-//            .setUrl(url)
+            .setUrl(url)
 //            .setVideoTitle(title)
             .setCacheWithPlay(true)
             .setRotateViewAuto(true)
             .setLockLand(true)
-            .setPlayTag(TAG)
+            .setPlayTag(RecyclerItemNormalHolder.TAG)
 //            .setMapHeadData(header)
             .setShowFullAnimation(true)
             .setNeedLockFull(true)
             .setPlayPosition(0)
+            .setThumbPlay(true)
             .setVideoAllCallBack(new GSYSampleCallBack() {
             }).build(mSampleCoverVideo);
 
         resolveData();
-//        viewPagerAdapter = new ViewPagerAdapter(this, dataList);
-//        binding.viewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
-//        binding.viewPager2.setAdapter(viewPagerAdapter);
-//        binding.viewPager2.setOffscreenPageLimit(1);
-//        binding.viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-//
-//            int dragPosition = -1;
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                super.onPageScrollStateChanged(state);
-//                int nowPosition = binding.viewPager2.getCurrentItem();
-//                Log.i(TAG, "onPageScrollStateChanged: >>> state = " + state);
-//                Log.i(TAG, "onPageScrollStateChanged: >>> current position = " + nowPosition);
-//                Log.i(TAG, "onPageScrollStateChanged: >>> dragPosition = " + dragPosition);
-//                // 变化SCROLL_STATE_DRAGGING->SCROLL_STATE_SETTLING->SCROLL_STATE_IDLE
-//                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
-//                    dragPosition = nowPosition;
-//                    if (dragPosition % 2 == 0) {
-//                        stopPosition(nowPosition);
-//                        updateCurrentPlayPosition(nowPosition);
-//                    }
-//                } else if (state == ViewPager2.SCROLL_STATE_SETTLING) {
-//
-//                } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
-////                    if (nowPosition == lastPosition) {
-////                        playPosition(lastPosition);
-////                    }
-//                    if (nowPosition == dragPosition && dragPosition % 2 == 0) {
-//                        playPosition(dragPosition);
-//                    }
-//                    dragPosition = -1;
-//                }
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                super.onPageSelected(position);
-//                Log.i(TAG, "onPageSelected: >>> position = " + position);
-//                if (position % 2 == 0) {
-//                    Log.i(TAG, "onPageSelected: >>> double");
-//                } else {
-//                    Log.i(TAG, "onPageSelected: >>> single");
-//                    return;
-//                }
-//                //大于0说明有播放
-////                long currentPosition = GSYVideoManager.instance().getCurPlayerManager().getCurrentPosition();
-////                Log.i(TAG, "onPageSelected: >>> currentPosition = " + currentPosition);
-//                int playPosition = GSYVideoManager.instance().getPlayPosition();
-//                Log.i(TAG, "onPageSelected: >>> playPosition = " + playPosition);
-//                if (playPosition >= 0) {
-//                    //对应的播放列表TAG
-//                    Log.i(TAG, "onPageSelected: >>> tag = " + GSYVideoManager.instance().getPlayTag());
-//                    Log.i(TAG, "onPageSelected: >>> RecyclerItemNormalHolder.TAG = " + RecyclerItemNormalHolder.TAG);
-//                    if (GSYVideoManager.instance().getPlayTag().equals(RecyclerItemNormalHolder.TAG)
-//                        /*&& (position != playPosition)*/) {
-////                        GSYVideoManager.releaseAllVideos();
-//                        playPosition(position);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-////                Log.i(TAG, "onPageScrolled: >>> state = " + binding.viewPager2.getScrollState());
-////                Log.i(TAG, "onPageScrolled: >>> position = " + position
-////                    + ", positionOffset = " + positionOffset
-////                    + ", positionOffsetPixels = " + positionOffsetPixels);
-////                Log.i(TAG, "onPageScrolled: >>> dragPosition = " + dragPosition);
-////                if (binding.viewPager2.getScrollState() == ViewPager2.SCROLL_STATE_IDLE) {
-////                    if (lastPosition == position) {
-////                        playPosition(position);
-////                    } else {
-////                        lastPosition = position;
-////                    }
-////                }
-//            }
-//        });
-//        binding.viewPager2.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                playPosition(0);
-//            }
-//        });
-
         viewPagerAdapter = new ViewPagerAdapter2(this, dataList);
         binding.banner.setAdapter(viewPagerAdapter);
         Log.i(TAG, "onCreate: >>> offset limit = " + binding.banner.getViewPager2().getOffscreenPageLimit());
@@ -178,28 +97,23 @@ public class ViewPager2Activity extends AppCompatActivity {
                     Log.i(TAG, "onPageSelected: >>> single");
                     return;
                 }
-                //大于0说明有播放
-//                long currentPosition = GSYVideoManager.instance().getCurPlayerManager().getCurrentPosition();
-//                Log.i(TAG, "onPageSelected: >>> currentPosition = " + currentPosition);
                 int playPosition = GSYVideoManager.instance().getPlayPosition();
                 Log.i(TAG, "onPageSelected: >>> playPosition = " + playPosition);
                 if (hasClone) {
                     playPosition = mSampleCoverVideo.getPlayPosition();
                     Log.i(TAG, "onPageSelected: >>> clone playPosition = " + playPosition);
                 }
-                if (playPosition >= 0) {
-                    //对应的播放列表TAG
-                    Log.i(TAG, "onPageSelected: >>> tag = " + GSYVideoManager.instance().getPlayTag());
-                    Log.i(TAG, "onPageSelected: >>> RecyclerItemNormalHolder.TAG = " + RecyclerItemNormalHolder.TAG);
-                    if (GSYVideoManager.instance().getPlayTag().equals(RecyclerItemNormalHolder.TAG)
-                        /*&& (position != playPosition)*/) {
-//                        GSYVideoManager.releaseAllVideos();
-                        playPosition(vpPosition);
-                    } else if (hasClone && mSampleCoverVideo.getPlayTag().equals(RecyclerItemNormalHolder.TAG)) {
-                        Log.i(TAG, "onPageSelected: >>> clone player start.");
-                        playPosition(vpPosition);
-                    }
-                }
+//                if (playPosition >= 0) {
+//                    //对应的播放列表TAG
+//                    Log.i(TAG, "onPageSelected: >>> tag = " + GSYVideoManager.instance().getPlayTag());
+//                    Log.i(TAG, "onPageSelected: >>> RecyclerItemNormalHolder.TAG = " + RecyclerItemNormalHolder.TAG);
+//                    if (GSYVideoManager.instance().getPlayTag().equals(RecyclerItemNormalHolder.TAG)) {
+//                        playPosition(vpPosition);
+//                    } else if (hasClone && mSampleCoverVideo.getPlayTag().equals(RecyclerItemNormalHolder.TAG)) {
+//                        Log.i(TAG, "onPageSelected: >>> clone player start.");
+//                        playPosition(vpPosition);
+//                    }
+//                }
             }
 
             @Override
@@ -214,17 +128,14 @@ public class ViewPager2Activity extends AppCompatActivity {
                 // 变化SCROLL_STATE_DRAGGING->SCROLL_STATE_SETTLING->SCROLL_STATE_IDLE
                 if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                     dragPosition = nowPosition;
-                    if (dragPosition /*% 2*/ == 1) {
+                    if (dragPosition == 1) {
                         stopPosition(nowPosition);
-                        updateCurrentPlayPosition(nowPosition);
+//                        updateCurrentPlayPosition(nowPosition);
                     }
                 } else if (state == ViewPager2.SCROLL_STATE_SETTLING) {
 
                 } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
-//                    if (nowPosition == lastPosition) {
-//                        playPosition(lastPosition);
-//                    }
-                    if (nowPosition == dragPosition && dragPosition /*% 2*/ == 1) {
+                    if (nowPosition == 1 && (dragPosition == 1 || dragPosition == 2)) {
                         playPosition(dragPosition);
                     } else if (dragPosition > 0 && Math.abs(nowPosition - dragPosition) > 1) {
                         if (dragPosition > nowPosition) {
@@ -236,11 +147,8 @@ public class ViewPager2Activity extends AppCompatActivity {
                 }
             }
         });
-        binding.banner.post(new Runnable() {
-            @Override
-            public void run() {
-                playPosition(0);
-            }
+        binding.banner.post(() -> {
+            playPosition(0);
         });
     }
 
@@ -286,88 +194,83 @@ public class ViewPager2Activity extends AppCompatActivity {
 //            Log.i(TAG, "playPosition: not need auto play.");
 //            return;
 //        }
-        binding.banner.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, "playPosition: >>> in post.");
-                RecyclerView.ViewHolder viewHolder = ((RecyclerView)
-                    binding.banner.getViewPager2().getChildAt(0))
-                    .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
-                Log.i(TAG, "playPosition: >>> viewHolder = " + viewHolder);
-                if (viewHolder != null) {
-                    RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
-                    Log.i(TAG, "playPosition: >>> currentPlayPosition = " + currentPlayPosition);
-                    int currentState = recyclerItemNormalHolder.getPlayer().getCurrentState();
-                    Log.i(TAG, "playPosition: >>> current play state = " + currentState);
-                    Log.i(TAG, "playPosition: >>> hasClone = " + hasClone);
+        mShot = null;
+        binding.banner.postDelayed(() -> {
+            Log.i(TAG, "playPosition: >>> in post.");
+            RecyclerView.ViewHolder viewHolder = ((RecyclerView)
+                binding.banner.getViewPager2().getChildAt(0))
+                .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
+            Log.i(TAG, "playPosition: >>> viewHolder = " + viewHolder);
+            if (viewHolder != null) {
+                RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
+                Log.i(TAG, "playPosition: >>> currentPlayPosition = " + currentPlayPosition);
+                int currentState = recyclerItemNormalHolder.getPlayer().getCurrentState();
+                Log.i(TAG, "playPosition: >>> current play state = " + currentState);
+                Log.i(TAG, "playPosition: >>> hasClone = " + hasClone);
+                if (currentState == GSYVideoView.CURRENT_STATE_PAUSE) {
+                    Log.i(TAG, "playPosition: >>> resume");
+                    if (needAutoPlay) {
+                        Log.i(TAG, "playPosition: >>> resume, not need");
+                        recyclerItemNormalHolder.getPlayer().onVideoResume();
+                    }
+                } else {
+                    Log.i(TAG, "playPosition: >>> start");
                     if (hasClone) {
                         recyclerItemNormalHolder.getPlayer().cloneState(mSampleCoverVideo);
                     }
-                    if (currentState == GSYVideoView.CURRENT_STATE_PAUSE) {
-                        Log.i(TAG, "playPosition: >>> resume");
-//                        recyclerItemNormalHolder.getPlayer().onVideoResume();
-//                        recyclerItemNormalHolder.getPlayer().startPlayLogic();
-//                        if (currentPlayPosition != -1) {
-//                            recyclerItemNormalHolder.getPlayer().seekTo(currentPlayPosition);
-//                        }
-//                        recyclerItemNormalHolder.getPlayer().startPlayLogic();
-                        if (needAutoPlay) {
-                            Log.i(TAG, "playPosition: >>> resume, not need");
-                            recyclerItemNormalHolder.getPlayer().onVideoResume();
-                        }
-//                        GSYVideoManager.instance().start();
-                    } else {
-                        Log.i(TAG, "playPosition: >>> start");
-                        if (currentPlayPosition != -1) {
-                            recyclerItemNormalHolder.getPlayer().setSeekOnStart(currentPlayPosition);
-                        }
-                        if (needAutoPlay) {
-                            Log.i(TAG, "playPosition: >>> start, not need");
-                            recyclerItemNormalHolder.getPlayer().startPlayLogic();
-                        }
+                    if (currentPlayPosition != -1) {
+                        recyclerItemNormalHolder.getPlayer().setSeekOnStart(currentPlayPosition);
                     }
-                    needAutoPlay = true;
-                    hasClone = false;
-//                    recyclerItemNormalHolder.getPlayer().startPlayLogic();
-//                    int lastState = GSYVideoManager.instance().getLastState();
-//                    recyclerItemNormalHolder.getPlayer().startPlayLogic();
-//                    recyclerItemNormalHolder.getPlayer().surface
+                    if (needAutoPlay) {
+                        Log.i(TAG, "playPosition: >>> start, auto start.");
+                        recyclerItemNormalHolder.getPlayer().startPlayLogic();
+                    } else {
+                        Log.i(TAG, "playPosition: >>> start, not need");
+                        recyclerItemNormalHolder.getPlayer().startPlayLogic();
+                        Log.i(TAG, "playPosition: >>> pause");
+                        if (mShot != null) {
+                            recyclerItemNormalHolder.getPlayer().resetToCoverImage(mShot);
+                        }
+                        recyclerItemNormalHolder.getPlayer().onVideoPause();
+                    }
                 }
+                needAutoPlay = true;
+                hasClone = false;
             }
-        }, 50);
+        }, 32);
     }
 
     private void stopPosition(int position) {
-        binding.banner.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, "stopPosition: >>> in post.");
-                RecyclerView.ViewHolder viewHolder = ((RecyclerView)
-                    binding.banner.getViewPager2().getChildAt(0))
-                    .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
-                Log.i(TAG, "stopPosition: >>> viewHolder = " + viewHolder);
-                if (viewHolder != null) {
-                    RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
-                    recyclerItemNormalHolder.getPlayer().onVideoPause();
-                    mSampleCoverVideo.cloneState(recyclerItemNormalHolder.getPlayer());
-                    hasClone = true;
-                }
+        binding.banner.postDelayed(() -> {
+            Log.i(TAG, "stopPosition: >>> in post.");
+            RecyclerView.ViewHolder viewHolder = ((RecyclerView)
+                binding.banner.getViewPager2().getChildAt(0))
+                .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
+            Log.i(TAG, "stopPosition: >>> viewHolder = " + viewHolder);
+            if (viewHolder != null) {
+                RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
+                currentPlayPosition = recyclerItemNormalHolder.getPlayer().getCurrentPositionWhenPlaying();
+                recyclerItemNormalHolder.getPlayer().onVideoPause();
+                mShot = Bitmap.createBitmap(recyclerItemNormalHolder.getPlayer().getCurrentFrameBitmap());
+                mSampleCoverVideo.cloneState(recyclerItemNormalHolder.getPlayer());
+                Log.i(TAG, "stopPosition: >>> mSampleCoverVideo = " + mSampleCoverVideo);
+                hasClone = true;
             }
-        }, 50);
+        }, 0);
     }
 
     private void updateCurrentPlayPosition(int position) {
-        RecyclerView.ViewHolder viewHolder = ((RecyclerView)
-            binding.banner.getViewPager2().getChildAt(0))
-            .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
-        Log.i(TAG, "getCurrentPlayPosition: >>> viewHolder = " + viewHolder);
-        if (viewHolder != null) {
-            RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
-            currentPlayPosition = recyclerItemNormalHolder.getPlayer().getCurrentPositionWhenPlaying();
-            Log.i(TAG, "updateCurrentPlayPosition: >>> currentPlayPosition = " + currentPlayPosition);
-            mSampleCoverVideo.cloneState(recyclerItemNormalHolder.getPlayer());
-            hasClone = true;
-        }
+//        RecyclerView.ViewHolder viewHolder = ((RecyclerView)
+//            binding.banner.getViewPager2().getChildAt(0))
+//            .findViewHolderForAdapterPosition(binding.banner.getViewPager2().getCurrentItem());
+//        Log.i(TAG, "getCurrentPlayPosition: >>> viewHolder = " + viewHolder);
+//        if (viewHolder != null) {
+//            RecyclerItemNormalHolder recyclerItemNormalHolder = (RecyclerItemNormalHolder) viewHolder;
+//            currentPlayPosition = recyclerItemNormalHolder.getPlayer().getCurrentPositionWhenPlaying();
+//            Log.i(TAG, "updateCurrentPlayPosition: >>> currentPlayPosition = " + currentPlayPosition);
+//            mSampleCoverVideo.cloneState(recyclerItemNormalHolder.getPlayer());
+//            hasClone = true;
+//        }
     }
 }
 

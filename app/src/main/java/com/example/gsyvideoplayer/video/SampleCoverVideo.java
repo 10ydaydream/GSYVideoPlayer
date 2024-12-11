@@ -1,6 +1,7 @@
 package com.example.gsyvideoplayer.video;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -263,6 +264,19 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
 
     public  Surface getCurrentSurface() {
         return mSurface;
+    }
+
+    public Bitmap getCurrentFrameBitmap() {
+        return mFullPauseBitmap;
+    }
+
+    public void resetToCoverImage() {
+        showPauseCover();
+    }
+
+    public void resetToCoverImage(Bitmap bitmap) {
+        mFullPauseBitmap = bitmap;
+        showPauseCover();
     }
 
     public void cloneState(SampleCoverVideo switchVideo) {

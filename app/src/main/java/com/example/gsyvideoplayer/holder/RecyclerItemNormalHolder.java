@@ -91,6 +91,7 @@ public class RecyclerItemNormalHolder extends RecyclerItemBaseHolder {
             .setShowFullAnimation(true)
             .setNeedLockFull(true)
             .setPlayPosition(0)
+            .setThumbPlay(true)
             .setVideoAllCallBack(new GSYSampleCallBack() {
 
                 @Override
@@ -175,7 +176,14 @@ public class RecyclerItemNormalHolder extends RecyclerItemBaseHolder {
                 resolveFullBtn(gsyVideoPlayer);
             }
         });
-        gsyVideoPlayer.loadCoverImageBy(R.mipmap.xxx2, R.mipmap.xxx2);
+        Log.i(TAG, "onBind: >>> shot = " + ViewPager2Activity.mShot);
+        if (ViewPager2Activity.mShot != null) {
+            gsyVideoPlayer.resetToCoverImage();
+            gsyVideoPlayer.setShowPauseCover(false);
+        } else {
+            gsyVideoPlayer.setShowPauseCover(true);
+            gsyVideoPlayer.loadCoverImageBy(R.mipmap.xxx2, R.mipmap.xxx2);
+        }
         gsyVideoPlayer.setGSYStateUiListener(new GSYStateUiListener() {
             @Override
             public void onStateChanged(int state) {
